@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:de1/checkuser.dart';
 import 'package:de1/cloudfire.dart';
 import 'package:de1/descPage.dart';
@@ -57,6 +59,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  TextEditingController searcCon = TextEditingController();
   final databaseRef = FirebaseDatabase.instance.ref('test1');
 
   logout() async{
@@ -81,12 +84,49 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                controller: searcCon,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Search"
+                ),
+                onChanged: (value){
+                  setState(() {
+
+                  });
+                },
+              ),
+            ),
+
+
             Expanded(
               child: FirebaseAnimatedList(
                 query: databaseRef,
+
                 itemBuilder: (context, snapshot, animation, index) {
-                  return ListTile(title: Text(snapshot.child("title").value.toString(),style: TextStyle(fontSize: 25),),subtitle: Text(snapshot.child("id").value.toString()),);
-                },
+                  final title = snapshot.child("title").value.toString();
+
+                  if(searcCon.text.isEmpty) {
+                    return ListTile(title: Text(snapshot
+                        .child("title")
+                        .value
+                        .toString(), style: TextStyle(fontSize: 25),),
+                      subtitle: Text(snapshot
+                          .child("id")
+                          .value
+                          .toString()),);
+                  }
+                  else if(title.toLowerCase().contains(searcCon.text.toLowerCase().toString())){
+                    return ListTile(
+                      title: Text(snapshot.child("title").value.toString(),style: TextStyle(fontSize: 25),),
+                      subtitle: Text(snapshot.child("id").value.toString()),
+                    );
+                  }else{
+                    return Container();
+                  }
+                  },
               ),
             ),
             // Expanded(
