@@ -1,11 +1,14 @@
 import 'package:de1/checkuser.dart';
 import 'package:de1/cloudfire.dart';
+import 'package:de1/descPage.dart';
 import 'package:de1/login.dart';
 import 'package:de1/notifipage.dart';
 import 'package:de1/signup.dart';
 import 'package:de1/welcomepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,8 +57,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  final databaseRef = FirebaseDatabase.instance.ref('test1');
+
   logout() async{
     FirebaseAuth.instance.signOut();
+    await Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => loginPage()));
   }
 
   @override
@@ -65,17 +71,55 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Main dart Page"),
+        actions: [
+          IconButton(onPressed: (){
+            logout();
+          }, icon: Icon(Icons.logout))
+        ],
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            ElevatedButton(onPressed: (){
-              logout();
-            }, child: Text("Log out"))
+            Expanded(
+              child: FirebaseAnimatedList(
+                query: databaseRef,
+                itemBuilder: (context, snapshot, animation, index) {
+                  return ListTile(title: Text(snapshot.child("title").value.toString(),style: TextStyle(fontSize: 25),),subtitle: Text(snapshot.child("id").value.toString()),);
+                },
+              ),
+            ),
+            // Expanded(
+            //     child: StreamBuilder(
+            //       stream: databaseRef.onValue,
+            //       builder: (context, AsyncSnapshot<DatabaseEvent> snapshot) {
+            //         if(!snapshot.hasData){
+            //           return CircularProgressIndicator();
+            //         }else {
+            //           Map<dynamic, dynamic> map = snapshot.data!.snapshot
+            //               .value as dynamic;
+            //           List<dynamic> ls = [];
+            //           ls.clear();
+            //           ls = map.values.toList();
+            //           return ListView.builder(
+            //             itemBuilder: (context, index) {
+            //               return ListTile(subtitle: Text(
+            //                   ls[index]["id"].toString()), title: Text(
+            //                 ls[index]["title"].toString(),
+            //                 style: TextStyle(fontSize: 25),));
+            //             },
+            //             itemCount: snapshot.data!.snapshot.children.length,
+            //           );
+            //         }
+            //        },
+            //     )
+            // )
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => descPage(),));
+      },child: Icon(Icons.add)),
     );
   }
 }
