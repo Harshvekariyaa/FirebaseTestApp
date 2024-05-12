@@ -1,5 +1,4 @@
 import 'package:de1/main.dart';
-import 'package:de1/welcomepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,7 @@ class _signupState extends State<signup> {
       try {
         uc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: email, password: pass).then((value){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(title: "title"),));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(),));
         });
       }
       on FirebaseAuthException catch(ex){

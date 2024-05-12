@@ -1,4 +1,4 @@
-import 'package:de1/login.dart';
+import 'package:de1/basic_pages/login.dart';
 import 'package:de1/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,7 +19,7 @@ class _checkuserState extends State<checkuser> {
     if(user==null){
       return loginPage();
     }else{
-      return MyHomePage(title: "titleee");
+      return MyHomePage();
     }
   }
 

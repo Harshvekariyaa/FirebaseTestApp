@@ -36,10 +36,12 @@ class _descPageState extends State<descPage> {
             ),
 
             ElevatedButton(child: Text("Add"), onPressed: (){
-              databaseRef.child(DateTime.now().millisecond.toString()).set({
-                "id" : DateTime.now().millisecond.toString(),
+              String id =  DateTime.now().millisecond.toString();
+              databaseRef.child(id).set({
+                "id" : id,
                 "title" : txtdesc.text.toString()
-              }).then((value) { showMsg("Added.."); txtdesc.text = ""; }).onError((error, stackTrace) => showMsg(error.toString()));
+              }).then((value) { showMsg("Added.."); txtdesc.text = ""; })
+                  .onError((error, stackTrace) => showMsg(error.toString()));
             },)
           ],
         ),
@@ -50,6 +52,5 @@ class _descPageState extends State<descPage> {
 
   showMsg(String msg) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-
   }
 }
